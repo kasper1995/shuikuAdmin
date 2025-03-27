@@ -7,6 +7,8 @@ export const enUS_globalTips = {
   'gloabal.tips.enterUsernameMessage': 'Please enter your Username!',
   'gloabal.tips.password': 'Password',
   'gloabal.tips.enterPasswordMessage': 'Please enter your Password!',
+  'gloabal.tips.captcha': 'Password',
+  'gloabal.tips.enterCaptchaMessage': 'Please enter your Captcha!',
   'gloabal.tips.rememberUser': 'Remember user',
   'gloabal.tips.login': 'Login',
   'gloabal.tips.backHome': 'Back Home',

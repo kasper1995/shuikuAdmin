@@ -65,16 +65,14 @@ const LayoutPage: FC = () => {
   };
 
   const fetchMenuList = useCallback(async () => {
-    const { status, result } = await getMenuList();
+    const result= await getMenuList();
 
-    if (status) {
-      setMenuList(result);
-      dispatch(
-        setUserItem({
-          menuList: initMenuListAll(result),
-        }),
-      );
-    }
+    setMenuList(result);
+    dispatch(
+      setUserItem({
+        menuList: initMenuListAll(result),
+      }),
+    );
   }, [dispatch]);
 
   useEffect(() => {

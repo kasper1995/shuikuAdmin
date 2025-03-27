@@ -48,7 +48,7 @@ const styles = css`
   .ant-spin-nested-loading,
   .ant-spin-container,
   .ant-table-container {
-    height: 100%;
+    //height: 100%;
   }
   .ant-spin-container {
     overflow: hidden;

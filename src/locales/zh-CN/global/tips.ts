@@ -8,6 +8,8 @@ export const zhCN_globalTips = {
   'gloabal.tips.enterUsernameMessage': '请输入用户名！',
   'gloabal.tips.password': '密码',
   'gloabal.tips.enterPasswordMessage': '请输入密码！',
+  'gloabal.tips.captcha': '验证码',
+  'gloabal.tips.enterCaptchaMessage': '请输入验证码！',
   'gloabal.tips.rememberUser': '记住用户',
   'gloabal.tips.backHome': '返回首页',
   'gloabal.tips.operation': '操作',

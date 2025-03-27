@@ -97,30 +97,30 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
               })}
             </span>
           </Tooltip>
-          <HeaderNoticeComponent />
-          <Dropdown
-            menu={{
-              onClick: info => selectLocale(info),
-              items: [
-                {
-                  key: 'zh_CN',
-                  icon: <ZhCnSvg />,
-                  disabled: locale === 'zh_CN',
-                  label: '简体中文',
-                },
-                {
-                  key: 'en_US',
-                  icon: <EnUsSvg />,
-                  disabled: locale === 'en_US',
-                  label: 'English',
-                },
-              ],
-            }}
-          >
-            <span>
-              <LanguageSvg id="language-change" />
-            </span>
-          </Dropdown>
+          {/*<HeaderNoticeComponent />*/}
+          {/*<Dropdown*/}
+          {/*  menu={{*/}
+          {/*    onClick: info => selectLocale(info),*/}
+          {/*    items: [*/}
+          {/*      {*/}
+          {/*        key: 'zh_CN',*/}
+          {/*        icon: <ZhCnSvg />,*/}
+          {/*        disabled: locale === 'zh_CN',*/}
+          {/*        label: '简体中文',*/}
+          {/*      },*/}
+          {/*      {*/}
+          {/*        key: 'en_US',*/}
+          {/*        icon: <EnUsSvg />,*/}
+          {/*        disabled: locale === 'en_US',*/}
+          {/*        label: 'English',*/}
+          {/*      },*/}
+          {/*    ],*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <span>*/}
+          {/*    <LanguageSvg id="language-change" />*/}
+          {/*  </span>*/}
+          {/*</Dropdown>*/}
 
           {logged ? (
             <Dropdown

@@ -5,12 +5,13 @@ import { css } from '@emotion/react';
 import MyButton from '@/components/basic/button';
 import MyForm from '@/components/core/form';
 import { useLocale } from '@/locales';
+import { ForwardedRef, forwardRef, useImperativeHandle } from "react";
 
 interface SearchProps<T> extends MyFormProps<T> {
   onSearch: (values: T) => void;
 }
 
-const BaseSearch = <T extends object>(props: SearchProps<T>) => {
+const BaseSearch = forwardRef(<T extends object>(props: SearchProps<T>, ref: ForwardedRef<any>) => {
   const { children, onSearch, ...rest } = props;
   const [form] = MyForm.useForm<T>();
   const { formatMessage } = useLocale();
@@ -22,6 +23,13 @@ const BaseSearch = <T extends object>(props: SearchProps<T>) => {
       onSearch(values);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    resetFields: () => {
+      form.resetFields();
+    },
+    getValues: () => form.getFieldsValue(),
+  }));
 
   return (
     <div css={styles}>
@@ -37,7 +45,7 @@ const BaseSearch = <T extends object>(props: SearchProps<T>) => {
       </MyForm>
     </div>
   );
-};
+});
 
 const MySearch = Object.assign(BaseSearch, {
   Item: MyForm.Item,

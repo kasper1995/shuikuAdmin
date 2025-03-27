@@ -13,3 +13,17 @@ export interface PageData<T> {
   total: number;
   data: T[];
 }
+
+export interface axiosResultData<T> {
+  Code: number;
+  Data: T;
+  RequestID: string;
+  Status: 'Success' | 'Fail';
+}
+
+export interface axiosResultsData<T> {
+  Code: number;
+  Data: T[];
+  RequestID: string;
+  Status: 'Success' | 'Fail';
+}

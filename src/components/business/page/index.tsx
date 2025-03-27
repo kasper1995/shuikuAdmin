@@ -2,11 +2,11 @@ import type { MyAsideProps } from '../aside';
 import type { MyRadioCardssOption } from '../radio-cards';
 import type { MyTabsOption } from '../tabs';
 import type { MyResponse } from '@/api/request';
-import type { PageData } from '@/interface';
+import type { axiosResultsData, PageData } from "@/interface";
 import type { ColumnsType } from 'antd/es/table/interface';
 
 import { css } from '@emotion/react';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 import MyTable from '@/components/core/table';
 import { useStates } from '@/utils/use-states';
@@ -15,9 +15,10 @@ import MyAside from '../aside';
 import MyRadioCards from '../radio-cards';
 import MySearch from '../search';
 import MyTabs from '../tabs';
+import { Space } from "antd";
 
 interface SearchApi {
-  (params?: any): MyResponse<PageData<any>>;
+  (params?: any): MyResponse<axiosResultsData<any>>;
 }
 
 type ParseDataType<S> = S extends (params?: any) => MyResponse<PageData<infer T>> ? T : S;
@@ -25,6 +26,7 @@ type ParseDataType<S> = S extends (params?: any) => MyResponse<PageData<infer T>
 export type MyPageTableOptions<S> = ColumnsType<S>;
 export interface PageProps<S> {
   searchRender?: React.ReactNode;
+  actionRender?: React.ReactNode;
   pageApi?: S;
   pageParams?: object;
   tableOptions?: MyPageTableOptions<ParseDataType<S>>;
@@ -45,10 +47,12 @@ export interface RefPageProps {
 }
 
 const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPageProps>) => {
+  const searchFormRef= useRef<any>()
   const {
     pageApi,
     pageParams,
     searchRender,
+    actionRender,
     tableOptions,
     tableRender,
     asideKey,
@@ -89,8 +93,8 @@ const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPa
         };
         const res = await pageApi(obj);
 
-        if (res.status) {
-          setPageData({ total: res.result.total, data: res.result.data });
+        if (res.Code === 0) {
+          setPageData({ total: res.Data.length, data: res.Data });
         }
       }
     },
@@ -119,7 +123,14 @@ const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPa
 
   useImperativeHandle(ref, () => ({
     setAsideCheckedKey,
-    load: (data?: object) => getPageData(data),
+    load: (data?: object) => {
+      if(data){
+        getPageData(data)
+      } else {
+        const value = searchFormRef?.current.getValues()
+        getPageData(value)
+      }
+    },
   }));
 
   return (
@@ -136,10 +147,13 @@ const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPa
         )}
         <div className="aside-main">
           {searchRender && (
-            <MySearch className="search" onSearch={onSearch}>
+            <MySearch className="search" onSearch={onSearch} ref={searchFormRef}>
               {searchRender}
             </MySearch>
           )}
+          {actionRender && <Space style={{ marginBottom: 16 }}>
+            {actionRender}
+          </Space>}
           {radioCardsData && (
             <MyRadioCards options={radioCardsData} defaultValue={radioCardsValue || radioCardsData[0].value} />
           )}

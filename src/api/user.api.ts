@@ -1,9 +1,10 @@
 import type { LoginParams, LoginResult, LogoutParams, LogoutResult } from '../interface/user/login';
 
 import { request } from './request';
+import { axiosResultData } from "@/interface";
 
 /** 登录接口 */
-export const apiLogin = (data: LoginParams) => request<LoginResult>('post', '/user/login', data);
+export const apiLogin = (data: LoginParams) => request<axiosResultData<LoginResult>>('post', '/system_user_login', data);
 
-/** 登出接口 */
-export const apiLogout = (data: LogoutParams) => request<LogoutResult>('post', '/user/logout', data);
+/** 获取验证码 */
+export const getCaptcha = () => request<axiosResultData<any>>('post', '/create_captcha', {});

@@ -5,10 +5,12 @@ import axios from 'axios';
 
 import store from '@/stores';
 import { setGlobalState } from '@/stores/global.store';
-// import { history } from '@/routes/history';
-
+import { history } from '@/routes/history';
+export const baseURL = 'http://14.103.136.48:8080/water_source_area/'
+export const FileURL = 'http://14.103.136.48/group1/upload';
 const axiosInstance = axios.create({
   timeout: 6000,
+  baseURL,
 });
 
 axiosInstance.interceptors.request.use(
@@ -18,7 +20,12 @@ axiosInstance.interceptors.request.use(
         loading: true,
       }),
     );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
 
+    if(config.url !== FileURL){
+      config.headers['Bearer'] = localStorage.getItem('t');
+    }
     return config;
   },
   error => {
@@ -42,7 +49,9 @@ axiosInstance.interceptors.response.use(
     if (config?.data?.message) {
       // $message.success(config.data.message)
     }
-
+    if(config?.data.Token){
+      localStorage.setItem('t', config?.data.Token || '');
+    }
     return config?.data;
   },
   error => {
@@ -54,9 +63,8 @@ axiosInstance.interceptors.response.use(
     // if needs to navigate to login page when request exception
     // history.replace('/login');
     let errorMessage = '系统异常';
-
-    if (error?.message?.includes('Network Error')) {
-      errorMessage = '网络错误，请检查您的网络';
+    if (error?.response?.data?.Message === 'token鉴权失败') {
+      history.replace('/login');
     } else {
       errorMessage = error?.message;
     }
@@ -78,7 +86,7 @@ export type Response<T = any> = {
   result: T;
 };
 
-export type MyResponse<T = any> = Promise<Response<T>>;
+export type MyResponse<T = any> = Promise<T>;
 
 /**
  *

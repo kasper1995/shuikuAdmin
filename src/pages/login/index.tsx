@@ -1,5 +1,5 @@
 import type { LoginParams } from '@/interface/user/login';
-import type { FC } from 'react';
+import { FC, useRef } from "react";
 
 import './index.less';
 
@@ -11,14 +11,18 @@ import { LocaleFormatter, useLocale } from '@/locales';
 import { formatSearch } from '@/utils/formatSearch';
 
 import { loginAsync } from '../../stores/user.action';
+import CaptchaImg from "@/pages/login/captcha";
+import { getBase64Encode, getMd5Hash } from "@/utils/crypto";
 
 const initialValues: LoginParams = {
-  username: 'guest',
-  password: 'guest',
-  // remember: true
+  Username: '',
+  Password: '',
+  Captcha: '',
+  CaptchaID: '',
 };
 
 const LoginForm: FC = () => {
+  const captchaRef = useRef<{ getCaptchaID: () => string }>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -26,6 +30,8 @@ const LoginForm: FC = () => {
   const { token } = antTheme.useToken();
 
   const onFinished = async (form: LoginParams) => {
+    form.CaptchaID = captchaRef.current?.getCaptchaID() || '';
+    form.Password = getMd5Hash(form.Password);
     const res = dispatch(await loginAsync(form));
 
     if (!!res) {
@@ -37,11 +43,11 @@ const LoginForm: FC = () => {
   };
 
   return (
-    <div className="login-page" style={{ backgroundColor: token.colorBgContainer }}>
+    <div className="login-page" style={{ backgroundImage: `url("https://sk.szsybh.cn/static/login/images/denglu.jpg")` }}>
       <Form<LoginParams> onFinish={onFinished} className="login-page-form" initialValues={initialValues}>
-        <h2>REACT ANTD ADMIN</h2>
+        <h2>我在水源区管理后台</h2>
         <Form.Item
-          name="username"
+          name="Username"
           rules={[
             {
               required: true,
@@ -58,7 +64,7 @@ const LoginForm: FC = () => {
           />
         </Form.Item>
         <Form.Item
-          name="password"
+          name="Password"
           rules={[
             {
               required: true,
@@ -75,11 +81,32 @@ const LoginForm: FC = () => {
             })}
           />
         </Form.Item>
-        <Form.Item name="remember" valuePropName="checked">
-          <Checkbox>
-            <LocaleFormatter id="gloabal.tips.rememberUser" />
-          </Checkbox>
+        <Form.Item
+          name="Captcha"
+          rules={[
+            {
+              required: true,
+              message: formatMessage({
+                id: 'gloabal.tips.enterCaptchaMessage',
+              }),
+            },
+          ]}
+        >
+          <div style={{display: 'flex'}}>
+            <Input
+              style={{marginRight: 20}}
+              placeholder={formatMessage({
+                id: 'gloabal.tips.captcha',
+              })}
+            />
+            <CaptchaImg ref={captchaRef} />
+          </div>
         </Form.Item>
+        {/*<Form.Item name="remember" valuePropName="checked">*/}
+        {/*  <Checkbox>*/}
+        {/*    <LocaleFormatter id="gloabal.tips.rememberUser" />*/}
+        {/*  </Checkbox>*/}
+        {/*</Form.Item>*/}
         <Form.Item>
           <Button htmlType="submit" type="primary" className="login-page-form_button">
             <LocaleFormatter id="gloabal.tips.login" />
