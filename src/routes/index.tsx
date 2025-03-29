@@ -16,6 +16,7 @@ const SystemGroupPage = lazy(() => import(/* webpackChunkName: "404'"*/ '@/pages
 const SystemUserPage = lazy(() => import(/* webpackChunkName: "404'"*/ '@/pages/system/user'));
 const SystemApiPage = lazy(() => import(/* webpackChunkName: "404'"*/ '@/pages/system/api'));
 const ReservoirPage = lazy(() => import(/* webpackChunkName: "reservoir" */ '@/pages/operation/reservoir'));
+const ArticlePage = lazy(() => import(/* webpackChunkName: "reservoir" */ '@/pages/operation/article'));
 // const Guide = lazy(() => import(/* webpackChunkName: "guide'"*/ '@/pages/guide'));
 // const RoutePermission = lazy(() => import(/* webpackChunkName: "route-permission"*/ '@/pages/permission/route'));
 // const FormPage = lazy(() => import(/* webpackChunkName: "form'"*/ '@/pages/components/form'));
@@ -64,6 +65,10 @@ const routeList: RouteObject[] = [
       {
         path: '/operation/reservoir',
         element: <WrapperRouteComponent element={<ReservoirPage />} titleId="title.operation.reservoir" />,
+      },
+      {
+        path: '/operation/article',
+        element: <WrapperRouteComponent element={<ArticlePage />} titleId="title.operation.article" />,
       },
       {
         path: '*',

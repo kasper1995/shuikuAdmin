@@ -62,6 +62,14 @@ export const menuList: MenuList = [
         },
         path: '/operation/reservoir',
       },
+      {
+        code: 'article',
+        label: {
+          zh_CN: '文章管理',
+          en_US: 'Article Management',
+        },
+        path: '/operation/article',
+      },
     ],
   },
 ];

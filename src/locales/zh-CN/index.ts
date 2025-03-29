@@ -9,7 +9,7 @@ import { zhCN_permissionRole } from './permission/role';
 import { zhCN_avatorDropMenu } from './user/avatorDropMenu';
 import { zhCN_tagsViewDropMenu } from './user/tagsViewDropMenu';
 import { zhCN_title } from './user/title';
-
+import { zhCN_operation } from './operation';
 const zh_CN = {
   ...zhCN_account,
   ...zhCN_avatorDropMenu,
@@ -22,6 +22,7 @@ const zh_CN = {
   ...zhCN_documentation,
   ...zhCN_notice,
   ...zhCN_component,
+  ...zhCN_operation
 };
 
 export default zh_CN;

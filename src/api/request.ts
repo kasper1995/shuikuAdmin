@@ -22,9 +22,9 @@ axiosInstance.interceptors.request.use(
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-
-    if(config.url !== FileURL){
-      config.headers['Bearer'] = localStorage.getItem('t');
+    config.headers['Bearer'] = localStorage.getItem('t');
+    if(config.url === FileURL){
+      delete config.headers['Bearer'];
     }
     return config;
   },
