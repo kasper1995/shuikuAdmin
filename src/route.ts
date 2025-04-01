@@ -70,6 +70,48 @@ export const menuList: MenuList = [
         },
         path: '/operation/article',
       },
+      {
+        code: 'Banner',
+        label: {
+          zh_CN: '轮播图',
+          en_US: 'Banner Management',
+        },
+        path: '/operation/banner',
+      },
+      {
+        code: 'SailViews',
+        label: {
+          zh_CN: '航拍全景图',
+          en_US: 'SailViews Management',
+        },
+        path: '/operation/sailViews',
+      },
+    ],
+  },
+  {
+    code: 'patrol',
+    path: '/patrol',
+    label: {
+      zh_CN: '巡查管理',
+      en_US: 'Patrol Management',
+    },
+    children: [
+      {
+        "code": 'question',
+        "path": '/patrol/question',
+        "label": {
+          "zh_CN": '试题管理',
+          "en_US": 'Question Management',
+        },
+      },
+      {
+        code: 'video',
+        label: {
+          zh_CN: '视频管理',
+          en_US: 'Video Management',
+        },
+        path: '/patrol/video',
+      },
     ],
   },
 ];

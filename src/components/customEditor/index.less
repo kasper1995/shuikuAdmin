@@ -1,0 +1,27 @@
+.custom-editor-wrapper {
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+
+  .editor-container {
+    .w-e-toolbar {
+      border: none;
+      background-color: #fafafa;
+    }
+
+    .w-e-text-container {
+      border: none;
+      height: calc(500px - 42px) !important; // 减去工具栏高度
+    }
+
+    .w-e-text-placeholder {
+      color: #999;
+    }
+  }
+
+  // 修复工具栏按钮样式
+  .w-e-bar-item {
+    .w-e-bar-item-content {
+      padding: 4px 10px;
+    }
+  }
+}

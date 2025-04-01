@@ -10,6 +10,7 @@ import { zhCN_avatorDropMenu } from './user/avatorDropMenu';
 import { zhCN_tagsViewDropMenu } from './user/tagsViewDropMenu';
 import { zhCN_title } from './user/title';
 import { zhCN_operation } from './operation';
+import { zhCN_Title } from "@/locales/zh-CN/title";
 const zh_CN = {
   ...zhCN_account,
   ...zhCN_avatorDropMenu,
@@ -22,7 +23,8 @@ const zh_CN = {
   ...zhCN_documentation,
   ...zhCN_notice,
   ...zhCN_component,
-  ...zhCN_operation
+  ...zhCN_operation,
+  ...zhCN_Title
 };
 
 export default zh_CN;

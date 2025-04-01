@@ -8,8 +8,12 @@ import { useRoutes } from 'react-router-dom';
 import Dashboard from '@/pages/dashboard';
 import LayoutPage from '@/pages/layout';
 import LoginPage from '@/pages/login';
+import BannerManagement from '@/pages/operation/banner';
+import QuestionPage from '@/pages/patrol/question';
+import VideoPage from '@/pages/patrol/video';
 
 import WrapperRouteComponent from './config';
+import SailViewManagement from "@/pages/operation/sailViews";
 
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ '@/pages/404'));
 const SystemGroupPage = lazy(() => import(/* webpackChunkName: "404'"*/ '@/pages/system/group'));
@@ -69,6 +73,22 @@ const routeList: RouteObject[] = [
       {
         path: '/operation/article',
         element: <WrapperRouteComponent element={<ArticlePage />} titleId="title.operation.article" />,
+      },
+      {
+        path: '/operation/banner',
+        element: <WrapperRouteComponent element={<BannerManagement />} titleId="title.operation.sailview" />,
+      },
+      {
+        path: '/operation/sailViews',
+        element: <WrapperRouteComponent element={<SailViewManagement />} titleId="title.operation.sailview" />,
+      },
+      {
+        path: '/patrol/question',
+        element: <WrapperRouteComponent element={<QuestionPage />} titleId="title.patrol.question" />,
+      },
+      {
+        path: '/patrol/video',
+        element: <WrapperRouteComponent element={<VideoPage />} titleId="title.patrol.video" />,
       },
       {
         path: '*',
