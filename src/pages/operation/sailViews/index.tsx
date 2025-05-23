@@ -1,29 +1,38 @@
 import { createSailView, deleteSailView, modifySailView, querySailViews } from '@/api/operation/sailview';
-import ImageUpload from '@/components/ImageUpload';
+import ImageUpload from '@/components/imageUpload';
 import { ISailView } from '@/services/operation/interface';
-import { Button, Form, Input, Modal, Table, message } from 'antd';
+import { Button, Form, Input, Modal, Table, message, Space } from "antd";
 import { useEffect, useRef, useState } from "react";
-import WaterSelect from '../reservoir/components/WaterSelect';
+import WaterSelector, { useWaterLabList } from "../../../components/waterSelector/waterSelector";
+import UrlUpload from "@/components/urlUpload";
 
 const SailViewManagement: React.FC = () => {
+  const {options} = useWaterLabList()
   const [form] = Form.useForm();
-  const waterSelectRef = useRef(null)
+  const [modalForm] = Form.useForm();
+  const waterSelectRef = useRef<any>(null);
   const [data, setData] = useState<ISailView[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState<ISailView | null>(null);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 15,
     total: 0,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: (total) => `共 ${total} 条`
   });
 
   const fetchData = async () => {
+    const values = form.getFieldsValue();
     setLoading(true);
     try {
       const response = await querySailViews({
-        Offset: pagination.current * pagination.pageSize,
-        Limit: 10
+        Title: values?.Title,
+        WaterID: values?.WaterID,
+        Offset: (pagination.current - 1) * pagination.pageSize + 1,
+        Limit: pagination.pageSize
       });
       if (response.Code === 0) {
         setData(response.Data.List);
@@ -45,12 +54,17 @@ const SailViewManagement: React.FC = () => {
   const handleAdd = () => {
     setEditingRecord(null);
     form.resetFields();
+    modalForm.resetFields();
     setModalVisible(true);
   };
 
   const handleEdit = (record: ISailView) => {
     setEditingRecord(record);
-    form.setFieldsValue(record);
+    modalForm.setFieldsValue({
+      Title: record.Title,
+      WaterID: record.WaterID,
+      Image: record.Img,
+    });
     setModalVisible(true);
   };
 
@@ -70,7 +84,7 @@ const SailViewManagement: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const values = await form.validateFields();
+      const values = await modalForm.validateFields();
       if (editingRecord) {
         const response = await modifySailView({ ...values, ID: editingRecord.ID });
         if (response.Code === 0) {
@@ -100,8 +114,25 @@ const SailViewManagement: React.FC = () => {
       current: newPagination.current || 1,
       pageSize: newPagination.pageSize || 10,
       total: pagination.total,
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: (total) => `共 ${total} 条`
     });
   };
+
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchData(values);
+  };
+
+  const handleReset = () => {
+    form.resetFields();
+    modalForm.resetFields();
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchData();
+  };
+
   const columns = [
     {
       title: '标题',
@@ -113,7 +144,7 @@ const SailViewManagement: React.FC = () => {
       dataIndex: 'Title',
       key: 'WaterName',
       render: (_, record) => {
-        return waterSelectRef?.current?.getWaterName(record.WaterID)
+        return options.find(item => item.value === record.WaterID)?.label || '';
       }
     },
     {
@@ -133,22 +164,41 @@ const SailViewManagement: React.FC = () => {
       title: '操作',
       key: 'action',
       render: (_: any, record: ISailView) => (
-        <>
+        <Space>
           <Button type="link" onClick={() => handleEdit(record)}>
             编辑
           </Button>
           <Button type="link" danger onClick={() => handleDelete(record.ID)}>
             删除
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
 
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={handleAdd}>
+      <div style={{ marginBottom: 8 }}>
+        <Form
+          form={form}
+          layout="inline"
+        >
+          <Form.Item name="Title" label="标题">
+            <Input placeholder="请输入标题" allowClear />
+          </Form.Item>
+          <Form.Item name="WaterID" label="水库">
+            <WaterSelector placeholder="请选择水库" allowClear ref={waterSelectRef} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" onClick={handleSearch}>
+              查询
+            </Button>
+            <Button style={{ marginLeft: 8 }} onClick={handleReset}>
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
+        <Button type="primary" onClick={handleAdd} style={{ marginTop: 8 }}>
           新增航拍全景图
         </Button>
       </div>
@@ -168,7 +218,7 @@ const SailViewManagement: React.FC = () => {
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
       >
-        <Form form={form} layout="vertical">
+        <Form form={modalForm} layout="vertical">
           <Form.Item
             name="Title"
             label="标题"
@@ -181,14 +231,14 @@ const SailViewManagement: React.FC = () => {
             label="水库"
             rules={[{ required: true, message: '请选择水库' }]}
           >
-            <WaterSelect ref={waterSelectRef} />
+            <WaterSelector />
           </Form.Item>
           <Form.Item
             name="Image"
             label="图片"
             rules={[{ required: true, message: '请上传图片' }]}
           >
-            <ImageUpload />
+            <UrlUpload text="请上传图片" />
           </Form.Item>
         </Form>
       </Modal>

@@ -1,32 +1,73 @@
 import { createArticle, deleteArticle, modifyArticle, queryArticle } from '@/api/operation/article';
 import CustomEditor from '@/components/customEditor';
-import ImageUpload from '@/components/imageUpload';
+import UrlUpload from '@/components/urlUpload';
+import VideoList from '@/components/videoList';
 import { ArticleQueryParams, ArticleRecord } from '@/interface/operation/article';
-import { Button, Form, Input, Modal, Select, Table, message } from 'antd';
+import { Button, Form, Input, Modal, Select, Table, message, DatePicker, InputNumber, Space } from "antd";
 import { useEffect, useState } from 'react';
-
+import { encodeHTML } from "@/utils/exportExcel/tool";
+import dayjs from "dayjs";
+import { useTreeDict } from "@/hooks/useTreeDict";
+import { fetchDictList } from "@/stores/dict";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 const ArticleManagement = () => {
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
   const [data, setData] = useState<ArticleRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState<ArticleRecord | null>(null);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 15,
     total: 0,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: (total) => `共 ${total} 条`
   });
 
+
+
+  const dictList = useSelector((state: any) => state.dict.dictList);
+  console.log(dictList);
+  useEffect(() => {
+    dispatch(fetchDictList('article_cate'));
+  }, [dispatch]);
+  const categoryOptions = dictList['article_cate'];
+
   // 查询列表
-  const fetchData = async (params: ArticleQueryParams) => {
+  const fetchData = async () => {
+    let params = searchForm.getFieldsValue();
     setLoading(true);
+    const [StartTime, EndTime] = params.CreatedTime?.map(i => dayjs(i)) || [];
+    const [StartUpdateTime, EndUpdateTime] = params.UpdateTime?.map(i => dayjs(i)) || [];
+    if((StartTime && EndTime) || (StartUpdateTime && EndUpdateTime)) {
+      params = {
+        ...params,
+        StartTime: StartTime?.format('YYYY-MM-DD 00:00:00'),
+        StartUpdateTime: StartUpdateTime?.format('YYYY-MM-DD 00:00:00'),
+        EndTime: EndTime?.format('YYYY-MM-DD 23:59:59'),
+        EndUpdateTime: EndUpdateTime?.format('YYYY-MM-DD 23:59:59')
+      }
+      delete params.CreatedTime;
+      delete params.UpdateTime;
+    }
     try {
-      const res = await queryArticle(params);
+      const res = await queryArticle({
+        ...params,
+        Offset: (pagination.pageSize || 0) * (pagination.current - 1) + 1,
+        Limit: pagination.pageSize,
+      });
       if (res.Code === 0) {
         setData(res.Data.List || []);
         setPagination({
           ...pagination,
-          total: res.Data.Total || 0,
+          total: res.Data.Count || 0,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `共 ${total} 条`
         });
       }
     } catch (error) {
@@ -36,53 +77,74 @@ const ArticleManagement = () => {
   };
 
   useEffect(() => {
-    fetchData({
-      ArticleID: 0,
-      Title: '',
-      Author: '',
-      Status: -1,
-      Offset: 0,
-      Limit: pagination.pageSize,
-    });
+    fetchData();
   }, [pagination.current, pagination.pageSize]);
 
   // 表格列定义
   const columns = [
+    {
+      title: '编号',
+      dataIndex: 'ID',
+      key: 'ID',
+      width: 80,
+    },
     {
       title: '标题',
       dataIndex: 'Title',
       key: 'Title',
     },
     {
-      title: '作者',
+      title: '副标题',
+      dataIndex: 'Subtitle',
+      key: 'Subtitle',
+    },
+    {
+      title: '主图',
+      dataIndex: 'Image',
+      key: 'Image',
+      render: (image: string) => (
+        <img src={image} alt="文章主图" style={{ maxWidth: 100, maxHeight: 100 }} />
+      ),
+    },
+    {
+      title: '类别',
+      dataIndex: 'Cate',
+      key: 'Cate',
+    },
+    {
+      title: '作者&来源',
       dataIndex: 'Author',
       key: 'Author',
     },
     {
-      title: '状态',
-      dataIndex: 'Status',
-      key: 'Status',
-      render: (status: number) => (
-        <span>{status === 1 ? '已发布' : '草稿'}</span>
-      ),
+      title: '排序',
+width: 80,
+      dataIndex: 'Sort',
+      key: 'Sort',
+      sorter: true,
     },
     {
       title: '发布时间',
-      dataIndex: 'PublishTime',
-      key: 'PublishTime',
+      dataIndex: 'CreatedTime',
+      key: 'CreatedTime',
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'UpdatedTime',
+      key: 'UpdatedTime',
     },
     {
       title: '操作',
       key: 'action',
       render: (_: any, record: ArticleRecord) => (
-        <>
+        <Space>
           <Button type="link" onClick={() => handleEdit(record)}>
             编辑
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record.ArticleID!)}>
+          <Button type="link" danger onClick={() => handleDelete(record.ID)}>
             删除
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
@@ -95,39 +157,57 @@ const ArticleManagement = () => {
   };
 
   // 处理删除
-  const handleDelete = async (ArticleID: number) => {
-    try {
-      const res = await deleteArticle(ArticleID);
-      if (res.Code === 0) {
-        message.success('删除成功');
-        await fetchData({
-          ArticleID: 0,
-          Title: '',
-          Author: '',
-          Status: -1,
-          Offset: 0,
-          Limit: pagination.pageSize,
-        });
-      }
-    } catch (error) {
-      message.error('删除失败');
-    }
+  const handleDelete = async (id: number) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这篇文章吗？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const res = await deleteArticle(id);
+          if (res.Code === 0) {
+            message.success('删除成功');
+            fetchData({
+              Title: '',
+              Cate: '',
+              Offset: 0,
+              Limit: pagination.pageSize,
+            });
+          }
+        } catch (error) {
+          message.error('删除失败');
+        }
+      },
+    });
   };
 
   // 处理表单提交
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      debugger
+      Object.assign(values, {
+        Videos: values.Videos || [],
+        Imgs: values.Imgs || [],
+        Subtitle: values.Subtitle || '',
+        Audio: '',
+        Content: encodeHTML(values.Content || ''),
+        Sort: +values.Sort || 0,
+      })
       if (editingRecord) {
         // 编辑
         const res = await modifyArticle({
           ...values,
-          ArticleID: editingRecord.ArticleID!,
+          ArticleID: editingRecord.ID,
         });
         if (res.Code === 0) {
           message.success('修改成功');
           setModalVisible(false);
           fetchData({
+            Title: '',
+            Cate: '',
+            Offset: (pagination.current - 1) * pagination.pageSize + 1,
             Limit: pagination.pageSize,
           });
         }
@@ -138,10 +218,8 @@ const ArticleManagement = () => {
           message.success('创建成功');
           setModalVisible(false);
           fetchData({
-            ArticleID: 0,
             Title: '',
-            Author: '',
-            Status: -1,
+            Cate: '',
             Offset: 0,
             Limit: pagination.pageSize,
           });
@@ -152,9 +230,57 @@ const ArticleManagement = () => {
     }
   };
 
+  const handleSearch = (values: any) => {
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchData();
+  };
+
+  const handleReset = () => {
+    searchForm.resetFields();
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchData();
+  };
+  console.log(form.getFieldsValue());
   return (
     <div className="p-6">
-      <div className="mb-4 flex justify-between">
+      <div className="mb-4" style={{ marginBottom: 8 }}>
+        <Form
+          form={searchForm}
+          layout="inline"
+          onFinish={handleSearch}
+        >
+          <Form.Item name="Title" label="标题">
+            <Input placeholder="请输入标题" allowClear />
+          </Form.Item>
+          <Form.Item name="Cate" label="类别">
+            <Select
+              placeholder="请选择类别"
+              allowClear
+              style={{ width: 200 }}
+              options={categoryOptions?.map(item => ({
+                label: item.Desc,
+                value: item.Value,
+              }))}
+            />
+          </Form.Item>
+          <Form.Item name="CreatedTime" label="发布时间">
+            <DatePicker.RangePicker />
+          </Form.Item>
+          <Form.Item name="UpdateTime" label="更新时间">
+            <DatePicker.RangePicker />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+            <Button style={{ marginLeft: 8 }} onClick={handleReset}>
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+
+      <div className="mb-4">
         <Button type="primary" onClick={() => {
           setEditingRecord(null);
           form.resetFields();
@@ -168,9 +294,16 @@ const ArticleManagement = () => {
         columns={columns}
         dataSource={data}
         loading={loading}
-        rowKey="ArticleID"
+        rowKey="ID"
         pagination={pagination}
-        onChange={(pagination) => setPagination(pagination)}
+        onChange={(newPagination) => setPagination({
+          current: newPagination.current || 1,
+          pageSize: newPagination.pageSize || 10,
+          total: pagination.total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `共 ${total} 条`
+        })}
       />
 
       <Modal
@@ -179,6 +312,7 @@ const ArticleManagement = () => {
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
         width={800}
+        style={{ maxHeight: '80vh', overflowY: 'auto' }}
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -189,29 +323,36 @@ const ArticleManagement = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="Author"
-            label="作者"
-            rules={[{ required: true, message: '请输入作者' }]}
+            name="Subtitle"
+            label="副标题"
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="Status"
-            label="状态"
-            rules={[{ required: true, message: '请选择状态' }]}
+            name="Cate"
+            label="类别"
+            rules={[{ required: true, message: '请选择类别' }]}
           >
-            <Select>
-              <Select.Option value={0}>草稿</Select.Option>
-              <Select.Option value={1}>已发布</Select.Option>
-            </Select>
+            <Select
+              options={categoryOptions?.map(item => ({
+                label: item.Desc,
+                value: item.Value,
+              }))}
+            />
           </Form.Item>
           <Form.Item
-          className='"custom-editor-wrapper"'
-            name="Image"
-            label="封面图"
-            rules={[{ required: true, message: '请上传封面图' }]}
+            name="Author"
+            label="作者&来源"
+            rules={[{ required: true, message: '请输入作者&来源' }]}
           >
-            <ImageUpload text="点击上传封面图" />
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="Image"
+            label="主图"
+            rules={[{ required: true, message: '请上传主图' }]}
+          >
+            <UrlUpload text="点击上传主图" />
           </Form.Item>
           <Form.Item
             name="Content"
@@ -221,18 +362,24 @@ const ArticleManagement = () => {
             <CustomEditor />
           </Form.Item>
           <Form.Item
-            name="Description"
-            label="描述"
-            rules={[{ required: true, message: '请输入描述' }]}
+            name="Intro"
+            label="简介"
+            rules={[{ required: true, message: '请输入简介' }]}
           >
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item
             name="Sort"
             label="排序"
-            rules={[{ required: true, message: '请输入排序' }]}
+            initialValue={1}
           >
-            <Input type="number" />
+            <InputNumber />
+          </Form.Item>
+          <Form.Item
+            name="Videos"
+            label="视频信息"
+          >
+            <VideoList name="Videos" />
           </Form.Item>
         </Form>
       </Modal>

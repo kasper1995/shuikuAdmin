@@ -1,0 +1,28 @@
+.url-upload-wrapper {
+    position: relative;
+    width: 100%;
+
+    .preview-container {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        padding: 8px;
+        margin-top: 4px;
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+    }
+}

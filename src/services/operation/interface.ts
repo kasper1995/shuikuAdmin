@@ -10,12 +10,10 @@ export interface ISailView {
 }
 
 export interface ISailViewQueryParams {
-  "ID"?: number,
-  "Groups"?: string,
-  "Status"?: number,
-  "StyleID"?: number,
-  "Offset"?: number,
-  "Limit"?: number
+  Title?: string;
+  WaterID?: number;
+  Offset: number;
+  Limit: number;
 }
 
 export interface ISailViewResponse {

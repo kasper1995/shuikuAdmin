@@ -13,6 +13,7 @@ import { formatSearch } from '@/utils/formatSearch';
 import { loginAsync } from '../../stores/user.action';
 import CaptchaImg from "@/pages/login/captcha";
 import { getBase64Encode, getMd5Hash } from "@/utils/crypto";
+import { history } from "@/routes/history";
 
 const initialValues: LoginParams = {
   Username: '',
@@ -32,13 +33,14 @@ const LoginForm: FC = () => {
   const onFinished = async (form: LoginParams) => {
     form.CaptchaID = captchaRef.current?.getCaptchaID() || '';
     form.Password = getMd5Hash(form.Password);
-    const res = dispatch(await loginAsync(form));
-
+    const res = await dispatch(await loginAsync(form));
     if (!!res) {
       const search = formatSearch(location.search);
-      const from = search.from || { pathname: '/' };
+      const from = search.from || { pathname: '/dashboard' };
 
-      navigate(from);
+      setTimeout(() =>{
+        window.location.href = `/shuiku_admin_web${from.pathname}`;
+      }, 200)
     }
   };
 

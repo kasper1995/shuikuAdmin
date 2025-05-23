@@ -1,31 +1,44 @@
 import type { MyPageTableOptions } from '@/components/business/page';
 import type { SystemApiRecord } from '@/interface/system';
-import type { FC } from 'react';
+import React, { FC, useEffect } from "react";
 
-import { Button, message, Modal, Space } from "antd";
+import { Button, message, Modal, Select, Space } from "antd";
 import { useRef } from 'react';
 
 import { deleteSystemApi, querySystemApi } from '@/api/system';
 import MyPage from '@/components/business/page';
+import dayjs from "dayjs";
 import CreateSystemApi from './add';
 import ModifySystemApi from './modify';
-
+import { fetchDictList } from "@/stores/dict";
+import { useDispatch, useSelector } from "react-redux";
+import { dictRecord } from "@/interface/user/user";
 const { Item: SearchItem } = MyPage.MySearch;
 
 const SystemApiPage: FC = () => {
+  const dispatch = useDispatch();
   const pageRef = useRef<any>(null);
   const handleReload = () => pageRef.current?.load();
-
+  const dictList = useSelector((state: any) => state.dict.dictList);
+  const list: dictRecord[] = dictList['api_module'] || [];
+  useEffect(() => {
+    dispatch(fetchDictList('api_module'));
+  }, [dispatch]);
   const handleDelete = async (record: SystemApiRecord) => {
     Modal.confirm({
-      title: '删除',
-      content: `确定删除API【${record.ActionCname}】吗？`,
+      title: '确认删除',
+      content: '确定要删除这个API吗？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
-        const { Code } = await deleteSystemApi({ ID: record.ID });
-
-        if (Code === 0) {
-          message.success({ content: '删除成功' });
-          handleReload();
+        try {
+          const { Code } = await deleteSystemApi({ Action: record.Action });
+          if (Code === 0) {
+            message.success('删除成功');
+            handleReload();
+          }
+        } catch (error) {
+          message.error('删除失败');
         }
       },
     });
@@ -36,15 +49,15 @@ const SystemApiPage: FC = () => {
     { title: '模块', dataIndex: 'Module', key: 'Module' },
     { title: '操作名', dataIndex: 'Action', key: 'Action' },
     { title: '操作中文名', dataIndex: 'ActionCname', key: 'ActionCname' },
-    { title: '创建时间', dataIndex: 'CreatedAt', key: 'CreatedAt' },
-    { title: '更新时间', dataIndex: 'UpdatedAt', key: 'UpdatedAt' },
+    { title: '创建时间', dataIndex: 'CreatedAt', key: 'CreatedAt', render: text => dayjs(text).format('YYYY-MM-DD HH:mm:ss') },
+    { title: '更新时间', dataIndex: 'UpdatedAt', key: 'UpdatedAt', render: text => dayjs(text).format('YYYY-MM-DD HH:mm:ss') },
     {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
           <ModifySystemApi record={record} afterOK={handleReload} />
-          <Button size="small" danger onClick={() => handleDelete(record)}>
+          <Button type="link" danger onClick={() => handleDelete(record)}>
             删除
           </Button>
         </Space>
@@ -62,9 +75,15 @@ const SystemApiPage: FC = () => {
           <SearchItem
             label="模块"
             name="Module"
-            type="input"
+            type="select"
             style={{ width: '200px' }}
-          />
+          >
+            {list.map((item) => (
+              <Select.Option key={item.Value} value={item.Value}>
+                {item.Desc}
+              </Select.Option>
+            ))}
+          </SearchItem>
           <SearchItem
             label="操作名"
             name="Action"
@@ -78,4 +97,4 @@ const SystemApiPage: FC = () => {
   );
 };
 
-export default SystemApiPage; 
+export default SystemApiPage;

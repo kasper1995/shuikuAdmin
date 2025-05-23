@@ -7,7 +7,7 @@ export const queryPatrolQuestion = (params: QuestionQueryParams) => {
 };
 
 // 创建试题
-export const createPatrolQuestion = (params: QuestionModifyParams) => {
+export const createPatrolQuestion = (params: QuestionModifyParams[]) => {
   return request('post', '/create_patrol_question', params);
 };
 
@@ -19,4 +19,4 @@ export const modifyPatrolQuestion = (params: QuestionModifyParams) => {
 // 删除试题
 export const deletePatrolQuestion = (ID: number) => {
   return request('post', '/delete_patrol_question', { ID });
-}; 
+};

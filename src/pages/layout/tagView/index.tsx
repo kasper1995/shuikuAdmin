@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { Tabs } from 'antd';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { addTag, removeTag, setActiveTag } from '@/stores/tags-view.store';
 
@@ -14,7 +14,7 @@ const TagsView: FC = () => {
   const { menuList, locale } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
-
+  const navigate = useNavigate();
   // onClick tag
   const onChange = (key: string) => {
     const tag = tags.find(tag => tag.path === key);
@@ -40,10 +40,10 @@ const TagsView: FC = () => {
       });
 
       if (tag) {
-        dispatch(setActiveTag(tag.path));
+        dispatch(setActiveTag([tag.path, navigate]));
       }
     },
-    [dispatch, location.pathname, tags],
+    [dispatch, location.pathname, tags, navigate],
   );
 
   useEffect(() => {

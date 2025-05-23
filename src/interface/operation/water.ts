@@ -1,5 +1,6 @@
 // 水库管理接口定义
 export interface WaterLabRecord {
+    ID: number;
     WaterLabID?: number;
     Name: string;
     LatLng: string;

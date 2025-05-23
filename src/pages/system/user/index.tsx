@@ -1,5 +1,4 @@
 import type { MyPageTableOptions } from '@/components/business/page';
-import type { BuniesssUser } from '@/interface/business';
 import type { SystemGroupRecord } from '@/interface/system';
 import { FC, useEffect } from "react";
 
@@ -10,8 +9,8 @@ import { deleteSystemUser, querySystemGroup, querySystemUser } from "@/api/syste
 
 import MyPage from '@/components/business/page';
 import CreateSystemUser from '@/pages/system/user/add';
-import ModifySystemUser from '@/pages/system/user/modify';
 import ModifySystemUserPassword from "@/pages/system/user/changePassword";
+import ModifySystemUser from '@/pages/system/user/modify';
 
 const { Item: SearchItem } = MyPage.MySearch;
 
@@ -20,16 +19,21 @@ const SystemUserWithSearchPage: FC = () => {
   const [systemGroupOptions, setSystemGroupOptions] = React.useState<any>([]);
   const handleReload = () => pageRef.current?.load();
 
-  const handleDelete = async (record: SystemGroupRecord) => {
+  const handleDelete = async (id: number) => {
     Modal.confirm({
-      title: '删除',
-      content: `确定删除用户【${record.GroupName}】吗？`,
+      title: '确认删除',
+      content: '确定要删除这个用户吗？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
-        const { Code } = await deleteSystemUser({ GroupName: record.GroupName });
-
-        if (Code === 0) {
-          message.success({ content: '删除成功' });
-          handleReload();
+        try {
+          const res = await deleteSystemUser(id);
+          if (res.Code === 0) {
+            message.success('删除成功');
+            handleReload();
+          }
+        } catch (error) {
+          message.error('删除失败');
         }
       },
     });
@@ -63,7 +67,7 @@ const SystemUserWithSearchPage: FC = () => {
         <Space size="middle">
           <ModifySystemUser record={record} systemGroupOptions={systemGroupOptions} afterOK={handleReload} />
           <ModifySystemUserPassword record={record} afterOK={handleReload} />
-          <Button variant="solid" size="small" color="danger" onClick={() => handleDelete(record)}>
+          <Button type="link" danger onClick={() => handleDelete(record.ID)}>
             删除
           </Button>
         </Space>

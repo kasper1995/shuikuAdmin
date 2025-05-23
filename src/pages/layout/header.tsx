@@ -12,14 +12,15 @@ import { ReactComponent as LanguageSvg } from '@/assets/header/language.svg';
 import { ReactComponent as MoonSvg } from '@/assets/header/moon.svg';
 import { ReactComponent as SunSvg } from '@/assets/header/sun.svg';
 import { ReactComponent as ZhCnSvg } from '@/assets/header/zh_CN.svg';
-import AntdSvg from '@/assets/logo/antd.svg';
-import ReactSvg from '@/assets/logo/react.svg';
+import AntdSvg from '@/assets/logo/logo.svg';
+import LogoPng from '@/assets/logo/logo192.png';
 import { LocaleFormatter, useLocale } from '@/locales';
 import { setGlobalState } from '@/stores/global.store';
 import { setUserItem } from '@/stores/user.store';
 
 import { logoutAsync } from '../../stores/user.action';
 import HeaderNoticeComponent from './notice';
+import Icon from "antd/es/icon";
 
 const { Header } = Layout;
 
@@ -76,14 +77,13 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
   return (
     <Header className="layout-page-header bg-2" style={{ backgroundColor: token.token.colorBgContainer }}>
       {device !== 'MOBILE' && (
-        <div className="logo" style={{ width: collapsed ? 80 : 200 }}>
-          <img src={ReactSvg} alt="" style={{ marginRight: collapsed ? '2px' : '20px' }} />
-          <img src={AntdSvg} alt="" />
+        <div className="logo" style={{ width: 200, overflow: 'hidden' }}>
+          <img src={LogoPng} style={{width: 100, height: 100}} alt="" />
         </div>
       )}
       <div className="layout-page-header-main">
         <div onClick={toggle}>
-          <span id="sidebar-trigger">{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</span>
+          {/*<span id="sidebar-trigger">{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</span>*/}
         </div>
         <div className="actions">
           <Tooltip
@@ -148,7 +148,7 @@ const HeaderComponent: FC<HeaderProps> = ({ collapsed, toggle }) => {
               }}
             >
               <span className="user-action">
-                <img src={Avator} className="user-avator" alt="avator" />
+                <UserOutlined />
               </span>
             </Dropdown>
           ) : (

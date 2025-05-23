@@ -13,6 +13,7 @@ import { HistoryRouter, history } from '@/routes/history';
 import { LocaleFormatter, localeConfig } from './locales';
 import RenderRouter from './routes';
 import { setGlobalState } from './stores/global.store';
+import { BrowserRouter } from "react-router-dom";
 
 const App: React.FC = () => {
   const { locale } = useSelector(state => state.user);
@@ -76,7 +77,8 @@ const App: React.FC = () => {
       }}
     >
       <IntlProvider locale={locale.split('_')[0]} messages={localeConfig[locale]}>
-        <HistoryRouter history={history}>
+        {/*<HistoryRouter history={history}>*/}
+          <BrowserRouter basename="/shuiku_admin_web">
           <Suspense fallback={null}>
             <Spin
               spinning={loading}
@@ -88,7 +90,7 @@ const App: React.FC = () => {
             ></Spin>
             <RenderRouter />
           </Suspense>
-        </HistoryRouter>
+        </BrowserRouter>
       </IntlProvider>
     </ConfigProvider>
   );

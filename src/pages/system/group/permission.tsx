@@ -44,7 +44,7 @@ const SystemGroupPermission = (props: IProps) => {
 
   return (
     <ActionModal
-      actionButton={<Button type="primary" size="small">权限</Button>}
+      actionButton={<Button type="link">权限</Button>}
       title="权限"
       handleOk={handleOk}
     >

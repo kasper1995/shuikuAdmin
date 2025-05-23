@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { setUserItem } from '@/stores/user.store';
 
-import { CustomIcon } from './customIcon';
-
 interface MenuProps {
   menuList: MenuList;
   openKey?: string;
@@ -26,7 +24,6 @@ const MenuComponent: FC<MenuProps> = props => {
   const getTitle = (menu: MenuList[0]) => {
     return (
       <span style={{ display: 'flex', alignItems: 'center' }}>
-        <CustomIcon type={menu.icon!} />
         <span>{menu.label[locale]}</span>
       </span>
     );

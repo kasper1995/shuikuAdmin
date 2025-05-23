@@ -12,6 +12,7 @@ export const loginAsync = createAsyncAction<LoginParams, boolean>(payload => {
     if (Code === 0) {
       localStorage.setItem('t', Data.Token);
       localStorage.setItem('username', Data.Nick);
+      localStorage.setItem('newUser', 'false');
       dispatch(
         setUserItem({
           logged: true,

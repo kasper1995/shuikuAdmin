@@ -51,7 +51,7 @@ const styles = css`
     //height: 100%;
   }
   .ant-spin-container {
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
 
@@ -59,7 +59,9 @@ const styles = css`
       flex: 1;
       overflow: hidden;
       border-bottom: 1px solid #eee;
-
+      .ant-table-header {
+        overflow: visible!important;
+      }
       .ant-table-container {
         display: flex;
         flex-direction: column;
@@ -72,7 +74,7 @@ const styles = css`
       }
     }
 
-    .ant-pagination {
+     .ant-pagination {
       padding: 0 10px;
     }
   }

@@ -10,9 +10,9 @@ import MyPage from '@/components/business/page';
 import CreateSystemGroup from '@/pages/system/group/add';
 import ModifySystemGroup from '@/pages/system/group/modify';
 import SystemGroupPermisstion from "@/pages/system/group/permission";
+import { fetchApiMap } from "@/stores/apiMap.store";
 import { fetchDictList } from '@/stores/dict';
 import { useDispatch } from 'react-redux';
-import { fetchApiMap } from "@/stores/apiMap.store";
 
 const { Item: SearchItem } = MyPage.MySearch;
 
@@ -37,16 +37,21 @@ const SystemGroupWithSearchPage: FC = () => {
 
   const handleReload = () => pageRef.current?.load();
 
-  const handleDelete = async (record: SystemGroupRecord) => {
+  const handleDelete = async (GroupName: string) => {
     Modal.confirm({
-      title: '删除',
-      content: `确定删除分组【${record.GroupName}】吗？`,
+      title: '确认删除',
+      content: '确定要删除这个分组吗？',
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
-        const { Code } = await deleteSystemGroup({ GroupName: record.GroupName });
-
-        if (Code === 0) {
-          message.success({ content: '删除成功' });
-          handleReload();
+        try {
+          const res = await deleteSystemGroup({ GroupName });
+          if (res.Code === 0) {
+            message.success('删除成功');
+            handleReload();
+          }
+        } catch (error) {
+          message.error('删除失败');
         }
       },
     });
@@ -72,7 +77,7 @@ const SystemGroupWithSearchPage: FC = () => {
             permissionData={apiMap}
             afterOK={loadApiMap}
           />
-          <Button size="small" danger onClick={() => handleDelete(record)}>
+          <Button type="link" danger onClick={() => handleDelete(record.GroupName)}>
             删除
           </Button>
         </Space>

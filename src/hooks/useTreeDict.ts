@@ -72,10 +72,10 @@ export const useTreeDict = (type: string = 'api_module', permissionData: SystemA
   const treeSelectProps: Partial<TreeSelectProps> = {
     treeData,
     treeCheckable: true,
-    showCheckedStrategy: 'SHOW_PARENT',
+    showCheckedStrategy: 'SHOW_CHILD',
     placeholder: '请选择模块',
-    style: { width: '100%' },
-    maxTagCount: 'responsive'
+    style: { width: '100%', height: 'auto' },
+    // maxTagCount: 'responsive'
   };
 
   return {

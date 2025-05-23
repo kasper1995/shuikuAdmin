@@ -1,7 +1,6 @@
 import type { TagItem, TagState } from '@/interface/layout/tagsView.interface';
 import { history } from '@/routes/history';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: TagState = {
@@ -13,9 +12,11 @@ const tagsViewSlice = createSlice({
   name: 'tagsView',
   initialState,
   reducers: {
-    setActiveTag(state, action: PayloadAction<string>) {
-      state.activeTagId = action.payload;
-      history.push(state.activeTagId)
+    setActiveTag(state, action: PayloadAction<[string, any]>) {
+      state.activeTagId = action.payload[0];
+      const navigate = action.payload[1];
+      navigate(state.activeTagId);
+      // history.push(`${state.activeTagId}`)
     },
     addTag(state, action: PayloadAction<TagItem>) {
       if (!state.tags.find(tag => tag.path === action.payload.path)) {

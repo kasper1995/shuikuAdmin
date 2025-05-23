@@ -33,7 +33,8 @@ const ActionModal = forwardRef((props: IProps, ref) => {
 
   return (
     <>
-      <Modal open={visible} onOk={onOk} onCancel={onCancel} {...rest}>
+      <Modal open={visible} onOk={onOk} onCancel={onCancel} destroyOnClose {...rest} width={800}
+             style={{ maxHeight: '80vh', overflowY: 'auto' }}>
         {props.children}
       </Modal>
       <span onClick={() => setVisible(v => !v)}>

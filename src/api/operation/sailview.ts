@@ -3,6 +3,7 @@ import { request } from '../request';
 
 // 创建航拍全景图
 export const createSailView = (params: Omit<ISailView, 'ID' | 'CreateTime' | 'UpdateTime'>) => {
+  console.log(params);
   return request('post', '/create_operations_sail_view', params);
 };
 

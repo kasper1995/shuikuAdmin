@@ -49,7 +49,22 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
             message.error('上传失败');
           }
         }
-      }
+      },
+      uploadVideo: {
+        async customUpload(file: File, insertFn: any) {
+          try {
+            const res = await uploadFile(file);
+            if (res) {
+              insertFn(res);
+            } else {
+              message.error('上传失败');
+            }
+          } catch (error) {
+            console.log(error);
+            message.error('上传失败');
+          }
+        }
+      },
     },
     htmlWhitelist: {
       img: ['src', 'alt', 'width', 'height']
@@ -98,7 +113,6 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
           mode="default"
           style={{ height: '500px', overflowY: 'hidden' }}
         />
-        <Button onClick={() => {console.log(editor?.getHtml())}}>1</Button>
       </div>
     </div>
   );

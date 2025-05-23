@@ -6,9 +6,10 @@ import svgrPlugin from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/shuiku_admin_web',
   resolve: {
     alias: {
-      '@': path.join(__dirname, 'src'),
+      '@': path.join(__dirname, './src'),
     },
   },
   server: {
@@ -42,6 +43,10 @@ export default defineConfig({
             return false;
           },
         },
+        {
+          libName: 'antd',
+          style: (name) => name !== 'theme' && `antd/es/${name}/style`,
+        },
       ],
     }),
     svgrPlugin({
@@ -51,4 +56,12 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: [
+        'antd/es/config-provider/style/css.js',
+        'antd/es/config-provider/style/index.css',
+      ]
+    }
+  }
 });

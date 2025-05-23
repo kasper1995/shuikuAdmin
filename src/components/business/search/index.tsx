@@ -23,11 +23,12 @@ const BaseSearch = forwardRef(<T extends object>(props: SearchProps<T>, ref: For
       onSearch(values);
     }
   };
-
+  const handleReset = () => {
+    form.resetFields();
+    onSearch({});
+  }
   useImperativeHandle(ref, () => ({
-    resetFields: () => {
-      form.resetFields();
-    },
+    resetFields: handleReset,
     getValues: () => form.getFieldsValue(),
   }));
 
@@ -40,7 +41,7 @@ const BaseSearch = forwardRef(<T extends object>(props: SearchProps<T>, ref: For
             {formatMessage({ id: 'component.search.request' })}
           </MyButton>
 
-          <MyButton onClick={() => form.resetFields()}>{formatMessage({ id: 'component.search.reset' })}</MyButton>
+          <MyButton onClick={handleReset}>{formatMessage({ id: 'component.search.reset' })}</MyButton>
         </MyForm.Item>
       </MyForm>
     </div>
@@ -54,8 +55,8 @@ const MySearch = Object.assign(BaseSearch, {
 export default MySearch;
 
 const styles = css`
-  padding: 20px;
-  .ant-form-item {
-    margin-bottom: 20px;
-  }
+  //padding: 20px;
+  //.ant-form-item {
+  //  margin-bottom: 20px;
+  //}
 `;

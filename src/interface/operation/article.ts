@@ -1,27 +1,34 @@
 // 文章管理接口定义
 export interface ArticleRecord {
-  ArticleID?: number;
+  ID: number;
   Title: string;
-  Content: string;
+  Subtitle: string;
   Image: string;
+  Imgs: string[];
+  Videos: string[];
+  Content: string;
+  Cate: string;
+  Intro: string;
   Author: string;
-  PublishTime: string;
-  Status: number; // 0: 草稿, 1: 已发布
   Sort: number;
-  Description: string;
+  Clickinfo: number;
+  Audio: string;
+  CreatedTime: string;
+  UpdatedTime: string;
 }
 
 // 查询参数接口
 export interface ArticleQueryParams {
-  ArticleID: number;
-  Title: string;
-  Author: string;
-  Status: number;
+  CreatedTime: any[];
+  StartTime: any;
+  EndTime: any;
+  Title?: string;
+  Cate?: string;
   Offset: number;
   Limit: number;
 }
 
 // 修改参数接口
-export interface ArticleModifyParams extends ArticleRecord {
-  ArticleID: number;
-} 
+export interface ArticleModifyParams extends Omit<ArticleRecord, 'ID' | 'CreatedTime' | 'UpdatedTime'> {
+  ID?: number;
+}

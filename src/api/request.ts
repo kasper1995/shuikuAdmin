@@ -5,9 +5,15 @@ import axios from 'axios';
 
 import store from '@/stores';
 import { setGlobalState } from '@/stores/global.store';
-import { history } from '@/routes/history';
-export const baseURL = 'http://14.103.136.48:8080/water_source_area/'
-export const FileURL = 'http://14.103.136.48/group1/upload';
+const location = window.location
+// export const baseURL = import.meta.env.MODE !== 'development' ? '/water_source_area/' : 'http://14.103.136.48:8080/water_source_area/'
+// export const FileURL = import.meta.env.MODE !== 'development' ? '/group1/upload' : 'http://14.103.136.48:8080/group1/upload';
+
+export const baseURL = import.meta.env.MODE !== 'development' ? `https://${location.host}/water_source_area/` : 'https://sybserver.cn/water_source_area/'
+// export const FileURL = import.meta.env.MODE !== 'development' ? `https://${location.host}/group1/upload` : 'https://sybserver.cn/group1/upload';
+export const FileURL = 'https://sybserver.cn/group1/upload';
+
+
 const axiosInstance = axios.create({
   timeout: 6000,
   baseURL,
@@ -64,13 +70,13 @@ axiosInstance.interceptors.response.use(
     // history.replace('/login');
     let errorMessage = '系统异常';
     if (error?.response?.data?.Message === 'token鉴权失败') {
-      history.replace('/login');
+      location.href = '/shuiku_admin_web/login';
     } else {
       errorMessage = error?.message;
     }
 
     console.dir(error);
-    error.message && $message.error(errorMessage);
+    error.message && $message.error(error?.response?.data?.Message || errorMessage);
 
     return {
       status: false,

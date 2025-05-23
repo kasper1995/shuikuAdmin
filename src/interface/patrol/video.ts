@@ -3,4 +3,8 @@ export interface PatrolVideo {
   Title: string;
   URL: string;
   Sort: number;
+}
+
+export interface PatrolVideoQueryParams {
+  Title?: string;
 } 

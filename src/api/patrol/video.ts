@@ -1,9 +1,9 @@
-import { PatrolVideo } from '@/interface/patrol/video';
+import { PatrolVideo, PatrolVideoQueryParams } from '@/interface/patrol/video';
 import { request } from '../request';
 
 // 查询视频列表
-export const queryPatrolVideo = () => {
-  return request('post', '/query_patrol_video');
+export const queryPatrolVideo = (params?: PatrolVideoQueryParams) => {
+  return request('post', '/query_patrol_video', params);
 };
 
 // 创建视频

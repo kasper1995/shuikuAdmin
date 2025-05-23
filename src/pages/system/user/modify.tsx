@@ -27,7 +27,7 @@ function ModifySystemGroup(props: ModifySystemGroupProps) {
     }
   }
   return (
-    <ActionModal actionButton={<Button size="small">修改</Button>} title="修改分组" handleOk={hanleOk}>
+    <ActionModal actionButton={<Button type="link">修改</Button>} title="修改分组" handleOk={hanleOk}>
       <Form initialValues={props.record} labelCol={{ span: 6 }} labelAlign="left" ref={formRef}>
         <Form.Item label="真实姓名" name="Nick" rules={[{ required: true, message: '请输入分组名称' }]}>
           <Input />

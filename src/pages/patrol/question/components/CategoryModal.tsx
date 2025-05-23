@@ -35,6 +35,9 @@ const CategoryModal: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      Object.assign(values, {
+        Relevancy: ''
+      });
       const res = await createPatrolCategory({
         Name: values.Name,
       });

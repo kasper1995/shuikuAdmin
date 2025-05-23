@@ -15,7 +15,7 @@ import MyAside from '../aside';
 import MyRadioCards from '../radio-cards';
 import MySearch from '../search';
 import MyTabs from '../tabs';
-import { Space } from "antd";
+import { Space, Table } from "antd";
 
 interface SearchApi {
   (params?: any): MyResponse<axiosResultsData<any>>;
@@ -65,7 +65,7 @@ const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPa
     tabsValue,
   } = props;
   const [pageData, setPageData] = useStates<PageData<ParseDataType<S>>>({
-    pageSize: 20,
+    pageSize: 15,
     pageNum: 1,
     total: 0,
     data: [],
@@ -147,32 +147,32 @@ const BasePage = <S extends SearchApi>(props: PageProps<S>, ref: React.Ref<RefPa
         )}
         <div className="aside-main">
           {searchRender && (
-            <MySearch className="search" onSearch={onSearch} ref={searchFormRef}>
+            <MySearch className="search" onSearch={onSearch} onRe ref={searchFormRef}>
               {searchRender}
             </MySearch>
           )}
-          {actionRender && <Space style={{ marginBottom: 16 }}>
+          {actionRender && <Space style={{ marginBottom: 8 }}>
             {actionRender}
           </Space>}
           {radioCardsData && (
             <MyRadioCards options={radioCardsData} defaultValue={radioCardsValue || radioCardsData[0].value} />
           )}
           {tableOptions && (
-            <div className="table">
-              <MyTable
-                height="100%"
-                dataSource={pageData.data}
-                columns={tableOptions}
-                pagination={{
-                  current: pageData.pageNum,
-                  pageSize: pageData.pageSize,
-                  total: pageData.total,
-                  onChange: onPageChange,
-                }}
-              >
-                {tableRender?.(pageData.data)}
-              </MyTable>
-            </div>
+            <Table
+              dataSource={pageData.data}
+              columns={tableOptions}
+              pagination={{
+                current: pageData.pageNum,
+                pageSize: pageData.pageSize,
+                total: pageData.total,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total) => `共 ${total} 条`,
+                onChange: onPageChange,
+              }}
+            >
+              {tableRender?.(pageData.data)}
+            </Table>
           )}
         </div>
       </div>

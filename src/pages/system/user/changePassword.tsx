@@ -26,7 +26,7 @@ function ModifySystemUserPassword(props: ModifySystemGroupProps) {
     }
   }
   return (
-    <ActionModal actionButton={<Button size="small">修改密码</Button>} title="修改用户密码" handleOk={hanleOk}>
+    <ActionModal actionButton={<Button type="link">修改密码</Button>} title="修改用户密码" handleOk={hanleOk}>
       <Form initialValues={props.record} labelCol={{ span: 6 }} labelAlign="left" ref={formRef}>
         <Form.Item label="用户名" name="Username" rules={[{ required: true, message: '请输入分组名称' }]}>
           <Input disabled />
