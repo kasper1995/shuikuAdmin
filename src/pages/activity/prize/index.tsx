@@ -8,7 +8,7 @@ import { modifyPrize, queryPrizes } from '@/api/activity/prize';
 import { exportExcel } from '@/utils/exportExcel';
 
 const expressCompanyOptions = [
-  { value: 'sunfeng', label: '顺丰' },
+  { value: 'shunfeng', label: '顺丰' },
   { value: 'zhongtong', label: '中通' },
   { value: 'yuantong', label: '圆通' },
   { value: 'shentong', label: '申通' },

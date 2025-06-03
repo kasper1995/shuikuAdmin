@@ -69,21 +69,26 @@ const ActivityQuestionManagement: React.FC = () => {
   };
 
   const handleFileUpload = async (file: File) => {
-    const result = await importExcel(file, importConfig);
-    if (result.success) {
-      // 转换水库名称为ID
-      const questions = result.data.map(question => ({
-        ...question,
-        WaterID: question.WaterID.split(',').map(name => getWaterIdByName(name.trim())).join(','),
-        Grade: Object.values(GradeLevel).indexOf(question.Grade) + 1,
-        IsAnswer: 0
-      }));
-      setParsedQuestions(questions);
-      setConfirmModalVisible(true);
-    } else {
-      message.error(result.message || '文件解析失败');
+    try{
+      const result = await importExcel(file, importConfig);
+      if (result.success) {
+        // 转换水库名称为ID
+        const questions = result.data.map(question => ({
+          ...question,
+          Answer: String(question.Answer),
+          WaterID: String(question.WaterID)?.split(',').map(name => getWaterIdByName(String(name).trim())).join(','),
+          Grade: Object.values(GradeLevel).indexOf(question.Grade) + 1,
+          IsAnswer: 0
+        }));
+        setParsedQuestions(questions);
+        setConfirmModalVisible(true);
+      } else {
+        message.error(result.message || '文件解析失败');
+      }
+      return false;
+    } catch (e) {
+      console.log(e);
     }
-    return false;
   };
 
   const handleConfirmUpload = async () => {

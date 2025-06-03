@@ -93,6 +93,16 @@ const PrizeWinningPage: React.FC = () => {
       dataIndex: 'DeliveryStatus',
       key: 'DeliveryStatus',
       width: 100,
+      render: (text: number) => {
+        switch (text) {
+          case 1:
+            return '未发货';
+          case 2:
+            return '已发货';
+          default:
+            return '未知状态';
+        }
+      }
     },
     {
       title: '创建时间',
@@ -165,7 +175,7 @@ const PrizeWinningPage: React.FC = () => {
     editForm.setFieldsValue({
       ExpressNo: record.ExpressNo,
       ExpressCompany: record.ExpressCompany,
-      DeliveryStatus: record.DeliveryStatus,
+      DeliveryStatus: 2,
     });
     setEditModalVisible(true);
   };
@@ -179,7 +189,7 @@ const PrizeWinningPage: React.FC = () => {
         ID: currentRecord.ID,
         ExpressNo: values.ExpressNo,
         ExpressCompany: values.ExpressCompany,
-        DeliveryStatus: values.DeliveryStatus,
+        DeliveryStatus: 2,
       });
 
       if (res.Code === 0) {
@@ -316,13 +326,13 @@ const PrizeWinningPage: React.FC = () => {
             >
               <Input placeholder="请输入快递公司" />
             </Form.Item>
-            <Form.Item
-              name="DeliveryStatus"
-              label="发货状态"
-              rules={[{ required: true, message: '请选择发货状态' }]}
-            >
-              <Input type="number" placeholder="请输入发货状态" />
-            </Form.Item>
+            {/*<Form.Item*/}
+            {/*  name="DeliveryStatus"*/}
+            {/*  label="发货状态"*/}
+            {/*  rules={[{ required: true, message: '请选择发货状态' }]}*/}
+            {/*>*/}
+            {/*  <Input type="number" placeholder="请输入发货状态" />*/}
+            {/*</Form.Item>*/}
           </Form>
         </Modal>
       </Card>
