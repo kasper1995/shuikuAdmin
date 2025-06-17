@@ -9,7 +9,7 @@ const location = window.location
 // export const baseURL = import.meta.env.MODE !== 'development' ? '/water_source_area/' : 'http://14.103.136.48:8080/water_source_area/'
 // export const FileURL = import.meta.env.MODE !== 'development' ? '/group1/upload' : 'http://14.103.136.48:8080/group1/upload';
 
-export const baseURL = import.meta.env.MODE !== 'development' ? `https://${location.host}/water_source_area/` : 'https://sybserver.cn/water_source_area/'
+export const baseURL = import.meta.env.MODE === 'development' ? `/water_source_area/` : `https://${location.host}/water_source_area/`
 // export const FileURL = import.meta.env.MODE !== 'development' ? `https://${location.host}/group1/upload` : 'https://sybserver.cn/group1/upload';
 export const FileURL = 'https://sybserver.cn/group1/upload';
 

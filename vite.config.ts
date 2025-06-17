@@ -15,10 +15,12 @@ export default defineConfig({
   server: {
     port: 8889,
     proxy: {
-      '/api': {
-        target: `http://localhost:${process.env.PORT}/api`,
-        // changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
+      '/water_source_area': {
+        // target: 'https://sk.szsybh.cn/water_source_area',
+        target: 'https://sybserver.cn/water_source_area',
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/water_source_area/, ''),
       },
     },
   },

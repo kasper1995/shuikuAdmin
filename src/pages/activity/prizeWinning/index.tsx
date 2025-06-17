@@ -5,6 +5,7 @@ import { Button, Card, DatePicker, Form, Input, Modal, Table, message } from 'an
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import ImportButton from './components/ImportButton';
 
 const { RangePicker } = DatePicker;
 
@@ -280,6 +281,7 @@ const PrizeWinningPage: React.FC = () => {
             <Button style={{ marginLeft: 8 }} onClick={handleExport}>
               导出
             </Button>
+            <ImportButton totalCount={pagination.total} onSuccess={() => fetchData(form.getFieldsValue())} />
           </Form.Item>
         </Form>
 
@@ -302,40 +304,31 @@ const PrizeWinningPage: React.FC = () => {
             }));
           }}
         />
-
-        <Modal
-          title="编辑收货信息"
-          open={editModalVisible}
-          onOk={handleEditSubmit}
-          onCancel={() => setEditModalVisible(false)}
-          okText="确定"
-          cancelText="取消"
-        >
-          <Form form={editForm} layout="vertical">
-            <Form.Item
-              name="ExpressNo"
-              label="快递单号"
-              rules={[{ required: true, message: '请输入快递单号' }]}
-            >
-              <Input placeholder="请输入快递单号" />
-            </Form.Item>
-            <Form.Item
-              name="ExpressCompany"
-              label="快递公司"
-              rules={[{ required: true, message: '请输入快递公司' }]}
-            >
-              <Input placeholder="请输入快递公司" />
-            </Form.Item>
-            {/*<Form.Item*/}
-            {/*  name="DeliveryStatus"*/}
-            {/*  label="发货状态"*/}
-            {/*  rules={[{ required: true, message: '请选择发货状态' }]}*/}
-            {/*>*/}
-            {/*  <Input type="number" placeholder="请输入发货状态" />*/}
-            {/*</Form.Item>*/}
-          </Form>
-        </Modal>
       </Card>
+
+      <Modal
+        title="编辑物流信息"
+        open={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onOk={handleEditSubmit}
+      >
+        <Form form={editForm} layout="vertical">
+          <Form.Item
+            name="ExpressNo"
+            label="快递单号"
+            rules={[{ required: true, message: '请输入快递单号' }]}
+          >
+            <Input placeholder="请输入快递单号" />
+          </Form.Item>
+          <Form.Item
+            name="ExpressCompany"
+            label="快递公司"
+            rules={[{ required: true, message: '请输入快递公司' }]}
+          >
+            <Input placeholder="请输入快递公司" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
