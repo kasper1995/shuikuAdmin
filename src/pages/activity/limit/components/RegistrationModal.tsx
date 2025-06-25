@@ -1,5 +1,6 @@
 import { queryActiveLimitLog } from '@/api/activity/limitLog';
 import { LimitLog } from '@/interface/activity/limitLog';
+import { maskValue } from '@/utils/mask';
 import { Button, DatePicker, Form, Modal, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -72,7 +73,12 @@ const RegistrationModal = ({ activeLimitID, visible, onClose }: RegistrationModa
       dataIndex: i.option_name,
       key: i.option_name,
       width: 100,
-      render: (_) => i.value
+      render: (value) => {
+        if (typeof value === 'string' && (/身份证|电话|联系方式|手机号/.test(i.option_name))) {
+          return maskValue(value);
+        }
+        return value;
+      }
     }))
     let oringin = [
       {

@@ -1,6 +1,7 @@
 import { modifyPrizeWinning, queryPrizeWinning } from '@/api/activity/prizeWinning';
 import { PrizeWinningRecord } from '@/interface/activity/prizeWinning';
 import { exportExcel } from '@/utils/exportExcel';
+import { maskValue } from '@/utils/mask';
 import { Button, Card, DatePicker, Form, Input, Modal, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -70,6 +71,7 @@ const PrizeWinningPage: React.FC = () => {
       dataIndex: 'DeliveryPhone',
       key: 'DeliveryPhone',
       width: 120,
+      render: (text) => maskValue(text),
     },
     {
       title: '收货地址',

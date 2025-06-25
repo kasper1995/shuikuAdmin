@@ -1,6 +1,6 @@
+import { showLoginModal } from '@/components/commandLoginModal';
 import { message } from 'antd';
 import * as XLSX from 'xlsx';
-
 interface ExportExcelProps {
   data: any[];
   fileName: string;
@@ -17,8 +17,17 @@ interface MultiSheetExportProps {
   fileName: string;
 }
 
-export const exportExcel = (excelData: ExportExcelProps | MultiSheetExportProps) => {
+export const exportExcel = async (excelData: ExportExcelProps | MultiSheetExportProps) => {
+  debugger
   try {
+    const ok = await showLoginModal();
+    if (ok) {
+      // 登录成功
+    } else {
+      message.error('非管理员，导出失败');
+      return;
+      // 取消或失败
+    }
     // 创建工作簿
     const wb = XLSX.utils.book_new();
 
@@ -27,7 +36,7 @@ export const exportExcel = (excelData: ExportExcelProps | MultiSheetExportProps)
       excelData.sheets.forEach(sheet => {
         const { data, sheetName, headers } = sheet;
         let exportData = data;
-        
+
         if (headers) {
           exportData = data.map(item => {
             const obj: any = {};
@@ -45,7 +54,7 @@ export const exportExcel = (excelData: ExportExcelProps | MultiSheetExportProps)
       // 单sheet导出
       const { data, fileName, sheetName = 'Sheet1', headers } = excelData;
       let exportData = data;
-      
+
       if (headers) {
         exportData = data.map(item => {
           const obj: any = {};

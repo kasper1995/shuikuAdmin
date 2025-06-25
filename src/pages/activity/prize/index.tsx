@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { modifyPrize, queryPrizes } from '@/api/activity/prize';
 import { exportExcel } from '@/utils/exportExcel';
+import { maskValue } from '@/utils/mask';
 
 const expressCompanyOptions = [
   { value: 'shunfeng', label: '顺丰' },
@@ -204,6 +205,7 @@ const PrizeManagement: React.FC = () => {
       title: '收货联系方式',
       dataIndex: 'AddressPhone',
       key: 'AddressPhone',
+      render: (text) => maskValue(text),
     },
     {
       title: '收货地址',

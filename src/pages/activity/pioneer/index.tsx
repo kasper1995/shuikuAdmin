@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 import { queryPioneers } from '@/api/activity/pioneer';
-import initExportData, { exportExcelDataProps } from "@/utils/exportExcel/initData";
 import { exportExcel } from "@/utils/exportExcel";
+import { maskValue } from '@/utils/mask';
 
 const PioneerManagement: React.FC = () => {
   const [form] = Form.useForm();
@@ -91,6 +91,7 @@ const PioneerManagement: React.FC = () => {
       title: '学生身份证号',
       dataIndex: 'StudentCard',
       key: 'StudentCard',
+      render: (text) => maskValue(text),
     },
     {
       title: '学生所在学校',
@@ -116,6 +117,7 @@ const PioneerManagement: React.FC = () => {
       title: '监护人电话',
       dataIndex: 'GuardianPhone',
       key: 'GuardianPhone',
+      render: (text) => maskValue(text),
     },
     {
       title: '报名时间',

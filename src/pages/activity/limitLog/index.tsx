@@ -2,6 +2,7 @@ import { queryLimitActivities } from '@/api/activity/limit';
 import { queryActiveLimitLog } from '@/api/activity/limitLog';
 import { LimitActivity, LimitLog } from '@/interface/activity/limitLog';
 import { exportExcel } from '@/utils/exportExcel';
+import { maskValue } from '@/utils/mask';
 import { Button, DatePicker, Empty, Form, Select, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -161,7 +162,11 @@ const LimitActivityLog = () => {
         width: 100,
         render: (_, record, index) => {
           const currentRow = JSON.parse(record?.OptionsSelect || '[]').find(j => j.option_name === i.option_name);
-          return currentRow?.value
+          const value = currentRow?.value;
+          if (typeof value === 'string' && (/身份证|电话|联系方式|手机号/.test(i.option_name))) {
+            return maskValue(value);
+          }
+          return value;
         }
       }
     });

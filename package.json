@@ -12,6 +12,7 @@
     "antd": "latest",
     "axios": "^0.24.0",
     "crypto-js": "^4.2.0",
+    "data-mask": "^0.0.4",
     "dompurify": "^3.2.4",
     "driver.js": "^0.9.8",
     "he": "^1.2.0",
